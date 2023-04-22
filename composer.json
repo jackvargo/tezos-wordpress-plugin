@@ -1,0 +1,12 @@
+{
+  "name": "flipgoal/wp-tezos-wallet",
+  "type": "wordpress-plugin",
+  "description": "A WordPress plugin for integrating Tezos blockchain functionality using the Beacon SDK and Taquito library.",
+  "keywords": ["wordpress", "plugin", "flipgoal"],
+  "homepage": "https://flipgoal.com",
+  "license": "MIT",
+  "require": {
+    "php": ">=7.4",
+    "composer/installers": "^1.9"
+  }
+}
