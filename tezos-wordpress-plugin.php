@@ -3,7 +3,7 @@
  * //TODO: Determine proper name and metadata for this
  * Plugin Name: Tezos WordPress Plugin
  * Plugin URI: https://flipgoal.com
- * Description: A WordPress plugin for integrating Tezos blockchain functionality using the Beacon SDK and Taquito library.
+ * Description: Supercharging WordPress with Web3's Only Evolving Blockchain: A WordPress plugin for integrating Tezos blockchain functionality using the Beacon SDK and Taquito library.
  * Version: 1.0.0
  * Author: Jack Vargo
  * Author URI: https://flipgoal.com
