@@ -1,0 +1,27 @@
+{
+  "name": "tezos-wordpress-plugin",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/tezos-wordpress-plugin.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/core": "^7.21.4",
+    "@babel/preset-env": "^7.21.4",
+    "babel-loader": "^9.1.2",
+    "webpack": "^5.80.0",
+    "webpack-cli": "^5.0.2",
+    "webpack-dev-server": "^4.13.3"
+  },
+  "dependencies": {
+    "@airgap/beacon-sdk": "^4.0.1",
+    "@taquito/beacon-wallet": "^16.1.2",
+    "@taquito/taquito": "^16.1.2",
+    "buffer": "^6.0.3",
+    "stream-browserify": "^3.0.0"
+  }
+}

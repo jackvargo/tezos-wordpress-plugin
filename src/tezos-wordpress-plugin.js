@@ -1,57 +1,12 @@
 // Import the required libraries
-// Note: You will need to set up a bundler like Webpack or Parcel for importing ES modules
-import { BeaconWallet } from "@airgap/beacon-sdk";
-import { TezosToolkit } from "@taquito/taquito";
+import { TezosToolkit } from '@taquito/taquito';
+import { BeaconWallet } from '@taquito/beacon-wallet';
 
 // Initialize the Tezos toolkit and Beacon wallet
-    //TODO: Get setting from user-configuration
-const Tezos = new TezosToolkit("https://YOUR_TEZOS_RPC_NODE");
-const wallet = new BeaconWallet({ name: "YourPluginName" });
+const Tezos = new TezosToolkit("https://mainnet.api.tez.ie");
+const wallet = new BeaconWallet({ name: "Tezos Wordpress Plugin" });
 Tezos.setWalletProvider(wallet);
 
-// Connect to the wallet
-async function connectWallet() {
-  // (Beacon SDK code)
-}
-
-// Interact with a smart contract
-async function interactWithSmartContract(contractAddress, entrypoint, parameters) {
-  // (Taquito library code)
-}
-
-// Get the balance of a Tezos address
-async function getBalance(address) {
-  // (Taquito library code)
-}
-
-// Add the JavaScript functions to the global window object (for use in HTML event handlers)
-window.connectWallet = connectWallet;
-
-javascriptCopy code
-// Import the required libraries
-import { BeaconWallet } from "@airgap/beacon-sdk";
-import { TezosToolkit } from "@taquito/taquito";
-
-// Initialize the Tezos toolkit and Beacon wallet
-const Tezos = new TezosToolkit("https://YOUR_TEZOS_RPC_NODE");
-const wallet = new BeaconWallet({ name: "YourPluginName" });
-Tezos.setWalletProvider(wallet);
-
-// Connect to the wallet
-async function connectWallet() {
-  try {
-    const address = await wallet.client.getActiveAccount();
-    if (!address) {
-      await wallet.requestPermissions();
-    }
-    const userAddress = await wallet.getPKH();
-    console.log("Connected wallet address:", userAddress);
-  } catch (error) {
-    console.error("Error connecting to the wallet:", error);
-  }
-}
-
-javascriptCopy code
 async function interactWithSmartContract(contractAddress, entrypoint, parameters) {
   try {
     const contract = await Tezos.wallet.at(contractAddress);
@@ -63,7 +18,6 @@ async function interactWithSmartContract(contractAddress, entrypoint, parameters
   }
 }
 
-javascriptCopy code
 async function getBalance(address) {
   try {
     const balance = await Tezos.tz.getBalance(address);
@@ -73,7 +27,6 @@ async function getBalance(address) {
   }
 }
 
-javascriptCopy code
 // Sign a message for authentication (Sync Wallet)
 async function signMessage() {
   const message = "Please sign this message to confirm your authenticity.";
@@ -94,6 +47,27 @@ function changeTezosNode() {
   if (newNodeUrl) {
     Tezos.setProvider({ rpc: newNodeUrl });
   }
+  // Send the new RPC node URL to your backend
+  jQuery.ajax({
+    url: yourBackendRpcNodeEndpoint,
+    type: 'POST',
+    data: {
+        action: 'tezos_wp_plugin_rpc_node',
+        new_rpc_node: newNodeUrl,
+        security: rpcNodeNonce,
+    },
+    success: function(response) {
+        if (response.success) {
+            alert('RPC node URL updated successfully');
+        } else {
+            alert('Error updating RPC node URL');
+        }
+    },
+    error: function(jqXHR, textStatus, errorThrown) {
+        console.error('Error updating RPC node URL:', textStatus, errorThrown);
+    },
+  });
+
 }
 
 // Disconnect the wallet and update the UI
@@ -114,11 +88,59 @@ function updateUIAfterWalletConnection() {
 
 // Update the connectWallet function to call updateUIAfterWalletConnection
 async function connectWallet() {
-  // (Beacon SDK code)
+  try {
+    const address = await wallet.client.getActiveAccount();
+    if (!address) {
+      await wallet.requestPermissions();
+    }
+    const userAddress = await wallet.getPKH();
+    console.log("Connected wallet address:", userAddress);
+  } catch (error) {
+    console.error("Error connecting to the wallet:", error);
+  }
 
   // Add this line after getting the user address (inside the try block)
   updateUIAfterWalletConnection();
 }
+
+// Define the baker's address and name
+const bakerAddress = "tz1WjqUNbgYDvGV9SU37FzvyAeyggjyFo9HC";
+const bakerName = "Artery by AndreFuchs";
+
+// Initiate DAppClient
+const client = new wallet.DAppClient({
+    name: bakerName,
+});
+
+const delegate = () => {
+    client.requestOperation({
+        operationDetails: [
+            {
+                kind: wallet.TezosOperationType.DELEGATION,
+                delegate: bakerAddress,
+            },
+        ],
+    });
+};
+
+// Add event listener to the button
+document.getElementById("tezos-delegate-button").addEventListener("click", () => {
+    // Check if we have an active account
+    client.getActiveAccount().then((activeAccount) => {
+        if (activeAccount) {
+            // If we have an active account, send the delegate operation directly
+            delegate();
+        } else {
+            // If we don't have an active account, we need to request permissions first and then send the delegate operation
+            client.requestPermissions().then((permissions) => {
+                delegate();
+            });
+        }
+    });
+});
+
+
+
 
 // Add the new JavaScript functions to the global window object (for use in HTML event handlers)
 window.connectWallet = connectWallet;
