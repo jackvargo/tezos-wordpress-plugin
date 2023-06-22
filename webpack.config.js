@@ -2,7 +2,7 @@ const path = require('path');
 const webpack = require('webpack');
 
 module.exports = {
-  mode: 'production',
+  mode: 'development',
   entry: './src/tezos-wordpress-plugin.js',
   output: {
     path: path.resolve(__dirname, 'dist'),
@@ -34,5 +34,12 @@ module.exports = {
       },
     ],
   },
+  devServer: {
+    static: path.resolve(__dirname, 'dist'),
+    compress: true,
+    port: 9000,
+    open: true,
+    hot: true,
+  },  
 };
 

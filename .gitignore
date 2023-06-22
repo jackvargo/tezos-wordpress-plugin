@@ -1,2 +1,32 @@
-node_modules
-dist
+# Ignore temporary files for development notes, working logic, etc.
+_trash
+
+# Ignore system and editor files
+.DS_Store
+Thumbs.db
+*.log
+*.swp
+*.swo
+
+# Ignore dependency directories
+node_modules/
+vendor/
+
+# Ignore build artifacts and distribution files
+dist/
+build/
+
+# Ignore WordPress core files (if the plugin is developed within a full WordPress installation)
+wp-config.php
+wp-content/uploads/
+wp-content/upgrade/
+wp-content/cache/
+wp-content/backups-db/
+
+# Ignore environment configuration files and sensitive data
+.env
+.env.local
+
+# Ignore IDE/project files (uncomment the ones relevant to your IDE)
+#.idea/
+.vscode/
