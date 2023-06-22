@@ -1,6 +1,9 @@
 // Import the required libraries
 import { TezosToolkit } from '@taquito/taquito';
 import { BeaconWallet } from '@taquito/beacon-wallet';
+import { OpKind } from '@taquito/taquito';
+
+
 
 // Initialize the Tezos toolkit and Beacon wallet
 const Tezos = new TezosToolkit("https://mainnet.api.tez.ie");
@@ -104,20 +107,19 @@ async function connectWallet() {
 }
 
 // Define the baker's address and name
-const bakerAddress = "tz1WjqUNbgYDvGV9SU37FzvyAeyggjyFo9HC";
-const bakerName = "Artery by AndreFuchs";
+const bakerName = "FlipGoal Corporate Baker";
 
 // Initiate DAppClient
-const client = new wallet.DAppClient({
-    name: bakerName,
-});
+const delegate_address = tezos_wp_plugin_vars.delegate_baker_address;
+const client = wallet.client;
 
-const delegate = () => {
-    client.requestOperation({
+
+const delegate = () => {  
+  client.requestOperation({
         operationDetails: [
             {
-                kind: wallet.TezosOperationType.DELEGATION,
-                delegate: bakerAddress,
+                kind: OpKind.DELEGATION,
+                delegate: delegate_address,
             },
         ],
     });

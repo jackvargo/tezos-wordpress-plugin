@@ -4,7 +4,7 @@
  * Plugin Name: Tezos WordPress Plugin
  * Plugin URI: https://flipgoal.com
  * Description: Supercharging WordPress with Web3's Only Evolving Blockchain: A WordPress plugin for integrating Tezos blockchain functionality using the Beacon SDK and Taquito library.
- * Version: 1.0.0
+ * Version: 0.0.2
  * Author: Jack Vargo
  * Author URI: https://flipgoal.com
  * License: GPL-2.0-or-later
@@ -18,6 +18,9 @@ if (!defined('ABSPATH')) {
 
 // Enqueue the plugin's JavaScript file
 function tezos_wp_plugin_enqueue_scripts() {
+    $script_url = WP_DEBUG
+        ? 'http://localhost:9000/tezos-wp-plugin.bundle.js'
+        : plugins_url('dist/tezos-wp-plugin.bundle.js', __FILE__);
     //$output .= '<script src="https://cdn.jsdelivr.net/npm/@airgap/beacon-dapp@4.0.1/dist/cjs/index.min.js"></script>';
     //$output .= '<script src="https://cdn.jsdelivr.net/npm/@taquito/taquito@12.1.1/dist/taquito.min.js"></script>';
     
@@ -33,8 +36,18 @@ function tezos_wp_plugin_enqueue_scripts() {
     // wp_enqueue_script('tezos-wp-plugin-js', plugin_dir_url(__FILE__) . 'tezos-wp-plugin.js', ['beacon-sdk-js', 'taquito-sdk-js'], '1.0.0', true);
     // wp_script_add_data('tezos-wp-plugin-js', 'type', 'module');
 
-    wp_enqueue_style('tezos-wp-plugin-css', plugin_dir_url(__FILE__) . 'tezos-wp-plugin.css', [], '1.0.0', true);
-    wp_enqueue_script('tezos-wp-plugin-js', plugins_url('dist/tezos-wp-plugin.bundle.js', __FILE__), [], '1.0.0', true);
+    wp_enqueue_style('tezos-wp-plugin-css', plugin_dir_url(__FILE__) . 'tezos-wordpress-plugin.css', [], '1.0.0', true);
+    //wp_enqueue_script('tezos-wp-plugin-js', plugins_url('dist/tezos-wp-plugin.bundle.js', __FILE__), [], '1.0.0', true);
+    wp_enqueue_script('tezos-wp-plugin-js', $script_url, [], '1.0.0', true);
+    // Get the option value
+    $delegate_baker_address = get_option('tezos_wp_plugin_delegate_baker_address', 'tz1KzNDRCqXRT74JCFEwwrYYcQGoChsakJMp');
+
+    // Localize the script with new data
+    $data_array = array(
+        'delegate_baker_address' => $delegate_baker_address,
+    );
+    wp_localize_script('tezos-wp-plugin-js', 'tezos_wp_plugin_vars', $data_array);
+    
 }
 add_action('wp_enqueue_scripts', 'tezos_wp_plugin_enqueue_scripts');
 
@@ -110,6 +123,24 @@ function tezos_wp_plugin_settings() {
     //         'sanitize_callback' => 'tezos_wp_plugin_sanitize_rpc_nodes',
     //     )
     // );
+    // Register a new settings section
+    add_settings_section(
+        'tezos_wp_plugin_delegate_section',
+        'Delegate Configuration',
+        null,
+        'tezos_wp_plugin_options'
+    );
+
+    add_settings_field(
+        'tezos_wp_plugin_delegate_baker_address',
+        'Enter the baker address that users will delegate their stake to.',
+        'tezos_wp_plugin_delegate_baker_address_callback',
+        'tezos_wp_plugin_options',
+        'tezos_wp_plugin_delegate_section'
+    );
+    register_setting('tezos_wp_plugin_options', 'tezos_wp_plugin_delegate_baker_address');
+
+
 }
 add_action('admin_init', 'tezos_wp_plugin_settings');
 
@@ -172,7 +203,26 @@ function tezos_wp_plugin_rpc_node_callback() {
 }
 add_action('wp_ajax_tezos_wp_plugin_rpc_node', 'tezos_wp_plugin_rpc_node_callback');
 
+/**
+ * Render the delegate method selection field
+ */
+function tezos_wp_plugin_delegate_section_callback() {
+    $baker_address = get_option('tezos_wp_plugin_delegate_baker_address', 'tz1KzNDRCqXRT74JCFEwwrYYcQGoChsakJMp'); //default to plugin author bakery: Flipgoal
+    ?>
+    <input type=textbox name="tezos_wp_plugin_deleegate_baker_address" value=<?php $baker_address ?>></input>
+    <?php
+}
 
+// Callback function for the baker address setting field
+function tezos_wp_plugin_delegate_baker_address_callback() {
+    $baker_address = get_option('tezos_wp_plugin_delegate_baker_address', 'tz1KzNDRCqXRT74JCFEwwrYYcQGoChsakJMp');
+    echo '<input type="text" name="tezos_wp_plugin_delegate_baker_address" value="' . esc_attr($baker_address) . '" size="40">';
+}
+
+// Add this function if you want to display a description or instructions for the Delegate Configuration section
+function tezos_wp_plugin_delegate_section_description() {
+    echo '<p>Enter the baker address that users will delegate their stake to.</p>';
+}
 
 /** 
  * Add the plugin settings page to the WordPress admin menu
