@@ -1,6 +1,5 @@
 <p align="center">
   <img src="https://flipgoal.com/wp-content/uploads/2023/06/Color-logo-with-background.png" width=80% alt="Tezos Wordpress Plugin logo" />
-  <img src="https://flipgoal.com/wp-content/uploads/2023/06/Color-logo-no-background.png" width=80% alt="Tezos Wordpress Plugin logo" />
 </p>
 
 > Supercharging WordPress with Web3's Only Evolving Blockchain: A WordPress plugin for integrating Tezos blockchain functionality using the Beacon SDK and Taquito library.
